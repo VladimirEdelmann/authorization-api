@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 
 class Utils {
     async hash(password) {
-        const saltRounds = 5;
+        const saltRounds = 15;
 
         try {
             const salt = await bcrypt.genSalt(saltRounds);
@@ -10,7 +10,7 @@ class Utils {
 
             return hashedPassword;
         } catch (err) {
-            console.log('Hash generating error', err);
+            console.log('Hash generating error: \n', err);
         }
     }
 
@@ -20,7 +20,7 @@ class Utils {
 
             return match;
         } catch (err) {
-            console.log('Password comparing error', err);
+            console.log('Password comparing error: \n', err);
         }
     }
 }

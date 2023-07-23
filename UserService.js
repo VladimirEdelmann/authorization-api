@@ -4,28 +4,38 @@ import Utils from './Utils.js';
 class UserService {
     async register(user) {
         try {
-            const id = await User.find(user._id);
-
-            if (!id) {
-                throw new Error('Your account already exist');
+            const foundUser = await User.findOne({
+                $or: [
+                    { username: user.username }, 
+                    { email: user.email }
+                ],
+              });
+            
+            if (foundUser) {
+                console.log('Error: Your account already exist');
+                return;
             }
 
             const hashedPassword = await Utils.hash(user.password);
-            createdUser = User.create({ 
-                ...user, 
-                password: hashedPassword 
+            const createdUser = User.create({
+                ...user,
+                password: hashedPassword
             });
 
             return createdUser;
         } catch (err) {
-            console.log('User generating error', err);
+            console.log('User generating error: \n', err);
         }
-
     }
 
     async login(user) {
         try {
-            const foundUser = await User.findById(user._id);
+            const foundUser = await User.findOne({
+                $or: [
+                    { username: user.username }, 
+                    { email: user.email }
+                ],
+            });
 
             if (!foundUser) {
                 throw new Error('User not found');
