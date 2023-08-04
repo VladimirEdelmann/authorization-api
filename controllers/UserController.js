@@ -1,9 +1,8 @@
-import User from '../models/User.js';
 import JWTService from '../services/JWTService.js';
 import UserService from '../services/UserService.js';
 
 const jwtSecretKey = 'df3g4vgw74g0v0dh86';
-const jwtTokenExpiration = '1h';
+const jwtTokenExpiration = '24h';
 
 const jwtService = new JWTService(jwtSecretKey, jwtTokenExpiration);
 
@@ -49,7 +48,6 @@ class UserController {
             res.cookie('access_token', token, {
                 httpOnly: true,
                 secure: true,
-                maxAge: 3600000 * 24,
             });
 
             console.log('Login successful');
@@ -59,26 +57,6 @@ class UserController {
             res.status(500).json(err);
         }
     }
-
-    // async logout(req, res) {
-    //     try {
-    //         const token = req.cookies.access_token;
-
-    //         if (!jwtService.verifyToken(token)) {
-    //             throw new Error('Unauthorized');
-    //         }
-
-    //         res.cookie('access_token', '', {
-    //             httpOnly: true,
-    //             secure: true,
-    //             expires: new Date(0),
-    //         });
-        
-    //         res.json({ message: 'Logout successful' });
-    //     } catch (err) {
-    //         res.status(500).json(err);
-    //     }
-    // }
 
     async forgetPassword(req, res) {
         try {
