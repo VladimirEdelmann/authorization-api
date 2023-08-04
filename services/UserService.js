@@ -1,9 +1,11 @@
 import ConfirmationTokenService from './ConfirmationTokenService.js';
 import EmailConfirmationService from './EmailConfirmationService.js';
-import User from './User.js';
-import Utils from './Utils.js';
+import User from '../models/User.js';
+import Utils from '../Utils.js';
+import ResetService from './ResetService.js';
 
 const confirmationTokenService = new ConfirmationTokenService();
+const resetTokenService = new ConfirmationTokenService();
 
 class UserService {
     async register(user) {
@@ -16,8 +18,7 @@ class UserService {
               });
             
             if (foundUser) {
-                console.log('Error: This account already exist');
-                return;
+                throw new Error('Error: This account already exist');
             }
 
             const confirmationToken = confirmationTokenService.generateToken();
@@ -37,7 +38,7 @@ class UserService {
 
             return createdUser;
         } catch (err) {
-            console.log('User generating error: \n', err);
+            console.error('User generating error: \n', err);
         }
     }
 
@@ -64,6 +65,7 @@ class UserService {
             }
     
             user.isEmailConfirmed = true;
+            user.confirmationToken = '';
 
             await user.save();
             
@@ -71,7 +73,7 @@ class UserService {
 
             return user;
         } catch (err) {
-            console.log('Confirmation error: ', err);
+            console.error('Confirmation error: ', err);
         }
     }
 
@@ -102,6 +104,55 @@ class UserService {
         } catch (err) {
             console.error('Login error', err);
         }
+    }
+
+    async sendResetEmail(user) {
+        try {
+            const foundUser = await User.findOne({
+                $or: [
+                    { username: user.username }, 
+                    { email: user.email }
+                ],
+            });
+
+            if (!foundUser) {
+                throw new Error('User not found');
+            }
+
+            const resetToken = resetTokenService.generateToken();
+
+            foundUser.resetToken = resetToken;
+
+            await foundUser.save();
+
+            ResetService.sendEmail(foundUser);
+        } catch (err) {
+            console.error('Email generation error: ', err);
+        }    
+    }
+
+    async reset(token, newPassword) {
+        const user = await User.findOne({ resetToken: token });
+        
+        if (!user) {
+            throw new Error('User not found');
+        }
+        
+        if(!user.resetToken) {
+            throw new Error('Reset token is invalid');
+        }
+        
+        if (resetTokenService.isTokenExpired()) {
+            throw new Error('Reset token expired');
+        }
+
+        user.password = await Utils.hash(newPassword);
+
+        await user.save();
+
+        console.log('Reset passed successfully');
+
+        return user;
     }
 
     async getAll() {

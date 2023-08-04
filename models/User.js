@@ -12,6 +12,7 @@ const User = new mongoose.Schema({
         }, 
         unique: true
     },
+    resetToken: { type: String, unique: true },
     refreshToken: { type: String, unique: true },
     role: { type: String, required: true }
 });
