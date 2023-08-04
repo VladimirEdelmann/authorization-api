@@ -1,6 +1,5 @@
 import Router from 'express';
 import UserController from './UserController.js';
-import User from './User.js';
 
 const router = new Router();
 
@@ -10,5 +9,8 @@ router.get('/home', (req, res) => {
 
 router.post('/register', UserController.register);
 router.post('/login', UserController.login);
+router.post('/logout', UserController.logout);
+router.get('/confirmEmail/:confirmationToken', UserController.confirmEmail);
+router.get('/getAllUsers', UserController.getAll);
 
 export default router;

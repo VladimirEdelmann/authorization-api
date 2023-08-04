@@ -16,22 +16,78 @@ class UserController {
             res.status(500).json(e);
         }
     }
+    
+    async confirmEmail(req, res) {
+        try {
+            const user = await UserService.confirmEmail(req.params);
+            console.log(user)
+
+            const token = jwtService.generateToken({user});
+
+            res.cookie('access_token', token, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 3600000, // 1 hour
+            });
+
+            res.json(user);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    }
 
     async login(req, res) {
         try {
             const user = await UserService.login(req.body);
             
             if (!user) {
-                return res.status(401).json({ message: 'Invalid credentials' });
+                throw new Error('Login error');
             }
 
             const token = jwtService.generateToken({user});
-            
-            res.json({ token });
+
+            res.cookie('access_token', token, {
+                httpOnly: true,
+                secure: true,
+                maxAge: 1000, // 1 hour
+            });
+
+            res.json({ message: 'Login successful', user });
         } catch (err) {
             res.status(500).json(err);
         }
     }
+
+    async logout(req, res) {
+        try {
+            const token = req.cookies.access_token;
+
+            if (jwtService.verifyToken(token)) {
+                throw new Error('Unauthorized');
+            }
+
+            res.cookie('access_token', req.cookies.access_token, {
+                httpOnly: true,
+                secure: true,
+                expires: new Date(0),
+            });
+        
+            res.json({ message: 'Logout successful' });
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    }
+
+    async getAll(req, res) {
+        try {
+            const users = await UserService.getAll();
+
+            res.json(users);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    }
+
 }
 
 export default new UserController();
