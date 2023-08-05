@@ -18,7 +18,7 @@ npm install
 
 ```
 
-3. Use and adjust atlas cloud for mongodb
+3. Use and adjust your atlas mongodb cloud service
 
 ## Run
 
