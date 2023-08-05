@@ -5,13 +5,7 @@ const User = new mongoose.Schema({
     password: { type: String, required: true },
     email: { type: String, required: true },
     isEmailConfirmed: { type: Boolean, required: true, default: false },
-    confirmationToken: { 
-        type: String, 
-        required: function () { 
-            return !this.isEmailConfirmed.required;
-        }, 
-        unique: true
-    },
+    confirmationToken: { type: String, unique: true },
     resetToken: { type: String, unique: true },
     refreshToken: { type: String, unique: true },
     role: { type: String, required: true }

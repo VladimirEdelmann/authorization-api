@@ -18,7 +18,7 @@ class UserService {
               });
             
             if (foundUser) {
-                throw new Error('Error: This account already exist');
+                return { error: 'Error: Account already exist', status: 409 };
             }
 
             const confirmationToken = confirmationTokenService.generateToken();
@@ -49,19 +49,19 @@ class UserService {
             const user = await User.findOne({ confirmationToken: confirmationToken});
     
             if (!user) {
-                throw new Error('User not found');
+                return { error: 'User not found', status: 404 };
             }
 
             if (!user.confirmationToken) {
-                throw new Error('Invalid confirmation token');
+                return { error: 'Invalid confirmation token', status: 400 };
             }
 
             if (user.isEmailConfirmed) {
-                throw new Error('User already confirmed');
+                return { error: 'User already confirmed', status: 400 };
             }
 
             if (confirmationTokenService.isTokenExpired()) {
-                throw new Error('Confirmation token expired');
+                return { error: 'Confirmation token expired', status: 410 };
             }
     
             user.isEmailConfirmed = true;
@@ -87,27 +87,28 @@ class UserService {
             });
 
             if (!foundUser) {
-                throw new Error('User not found');
-            }
-
-            if(!foundUser.confirmationToken) {
-                throw new Error('Confirmation has not been passed');
+                return { error: 'User not found', status: 404 };
             }
 
             const match = await Utils.compare(user.password, foundUser.password);
             
             if (!match) {
-                throw new Error('Invalid credentials');
+                return { error: 'Invalid credentials', status: 401 };
             }
 
             return foundUser;
         } catch (err) {
             console.error('Login error', err);
+            return { error: 'Internal server error', status: 500 };
         }
     }
 
     async sendResetEmail(user) {
         try {
+            if (!user) {
+                return { error: 'Password or email did not passed', status: 400 };
+            }
+
             const foundUser = await User.findOne({
                 $or: [
                     { username: user.username }, 
@@ -116,7 +117,7 @@ class UserService {
             });
 
             if (!foundUser) {
-                throw new Error('User not found');
+                return { error: 'User not found', status: 404 }
             }
 
             const resetToken = resetTokenService.generateToken();
@@ -126,6 +127,8 @@ class UserService {
             await foundUser.save();
 
             ResetService.sendEmail(foundUser);
+
+            return foundUser;
         } catch (err) {
             console.error('Email generation error: ', err);
         }    
@@ -135,15 +138,19 @@ class UserService {
         const user = await User.findOne({ resetToken: token });
         
         if (!user) {
-            throw new Error('User not found');
+            return { error: 'User not found', status: 404 };
+        }
+
+        if (!newPassword) {
+            return { error: 'Password did not passed', status: 400 };
         }
         
         if(!user.resetToken) {
-            throw new Error('Reset token is invalid');
+            return { error: 'Reset token is invalid', status: 400 };
         }
         
         if (resetTokenService.isTokenExpired()) {
-            throw new Error('Reset token expired');
+            return { error: 'Reset token expired', status: 410 };
         }
 
         user.password = await Utils.hash(newPassword);

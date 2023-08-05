@@ -1,15 +1,17 @@
 import JWTService from '../services/JWTService.js';
 import UserService from '../services/UserService.js';
+import { JWT_SECRET_KEY, ACCESS_TOKEN_EXPIRATION } from '../constants.js';
 
-const jwtSecretKey = 'df3g4vgw74g0v0dh86';
-const jwtTokenExpiration = '24h';
-
-const jwtService = new JWTService(jwtSecretKey, jwtTokenExpiration);
+const jwtService = new JWTService(JWT_SECRET_KEY, ACCESS_TOKEN_EXPIRATION);
 
 class UserController {
     async register(req, res) {
         try {
             const createdUser = await UserService.register(req.body);
+
+            if (createdUser.error) {
+                return res.status(user.status).json({ error: user.error });
+            }
         
             res.json(createdUser);
         } catch (e) {
@@ -20,6 +22,10 @@ class UserController {
     async confirmEmail(req, res) {
         try {
             const user = await UserService.confirmEmail(req.params);
+
+            if (user.error) {
+                return res.status(user.status).json({ error: user.error });
+            }
 
             const token = jwtService.generateToken({user});
 
@@ -39,8 +45,8 @@ class UserController {
         try {
             const user = await UserService.login(req.body);
             
-            if (!user) {
-                throw new Error('Login error');
+            if (user.error) {
+                return res.status(user.status).json({ error: user.error });
             }
 
             const token = jwtService.generateToken({user});
@@ -60,7 +66,11 @@ class UserController {
 
     async forgetPassword(req, res) {
         try {
-            await UserService.sendResetEmail(req.body);
+            const user = await UserService.sendResetEmail(req.body);
+
+            if (user.error) {
+                return res.status(user.status).json({error: user.error});
+            }
 
             res.json({ message: 'Check your email for password reset' });
         } catch (err) {
@@ -71,6 +81,10 @@ class UserController {
     async reset(req, res) {
         try {
             const user = await UserService.reset(req.params.resetToken, req.body.password);
+
+            if (user.error) {
+                return res.status(user.status).json({ error: user.error });
+            }
 
             res.json(user);
         } catch (err) {

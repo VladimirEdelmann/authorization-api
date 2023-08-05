@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { EMAIL_SERVICE, EMAIL_USERNAME, EMAIL_PASSWORD } from '../constants.js';
 
 class EmailConfirmationService {
     constructor(emailService, emailUsername, emailPassword) {
@@ -31,4 +32,4 @@ class EmailConfirmationService {
     }
 }
 
-export default new EmailConfirmationService('Outlook', 'vladimiredelmann@hotmail.com', 'gotsanN123J');
+export default new EmailConfirmationService(EMAIL_SERVICE, EMAIL_USERNAME, EMAIL_PASSWORD);

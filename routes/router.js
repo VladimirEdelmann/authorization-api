@@ -10,8 +10,8 @@ router.get('/home', authenticateToken, (req, res) => {
 });
 
 router.post('/register', UserController.register);
-router.post('/login', UserController.login);
 router.get('/confirmEmail/:confirmationToken', UserController.confirmEmail);
+router.post('/login', UserController.login);
 router.post('/forgetPassword', UserController.forgetPassword);
 router.post('/reset/:resetToken', UserController.reset);
 router.get('/getAllUsers', checkAdminRole, UserController.getAll);

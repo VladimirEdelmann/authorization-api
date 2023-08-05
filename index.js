@@ -3,16 +3,12 @@ import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 
 import router from './routes/router.js';
-
-const PORT = 5000;
-
-const DB_URL = `mongodb+srv://vladimiredelmann:gotsanN123J@cluster0.sgnzh67.mongodb.net/?retryWrites=true&w=majority`;
+import { DB_URL, PORT } from './constants.js';
 
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-
 app.use('/authorize', router);
 
 async function startServer() {

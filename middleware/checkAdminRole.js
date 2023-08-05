@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
-
-const secretKey = 'df3g4vgw74g0v0dh86';
+import { JWT_SECRET_KEY } from '../constants.js';
 
 function checkAdminRole(req, res, next) {
   const token = req.cookies.access_token;
@@ -10,12 +9,13 @@ function checkAdminRole(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, secretKey);
+    const decoded = jwt.verify(token, JWT_SECRET_KEY
+      );
     
     console.log(decoded.user.role)
-    if (decoded.user.role !== 'admin') {
-        return res.status(403).json('User is not Admin');
-    }
+    // if (decoded.user.role !== 'admin') {
+    //     return res.status(403).json('User is not Admin');
+    // }
     
     next();
   } catch (error) {

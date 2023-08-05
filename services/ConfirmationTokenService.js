@@ -1,6 +1,5 @@
 import crypto from 'crypto';
-
-const confirmationTokenExpiration = 60 * 60 * 1000; // 1 hour
+import { confirmationTokenExpiration } from '../constants.js';
 
 class ConfirmationTokenService {
     constructor() {

@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
-
-const secretKey = 'df3g4vgw74g0v0dh86';
+import { JWT_SECRET_KEY } from '../constants.js';
 
 function authenticateToken(req, res, next) {
   const token = req.cookies.access_token;
@@ -10,7 +9,7 @@ function authenticateToken(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, secretKey);
+    const decoded = jwt.verify(token, JWT_SECRET_KEY);
 
     next();
   } catch (error) {

@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { EMAIL_SERVICE, EMAIL_USERNAME, EMAIL_PASSWORD } from '../constants.js';
 
 class ResetService {
     constructor(emailService, emailUsername, emailPassword) {
@@ -31,4 +32,4 @@ class ResetService {
     }
 }
 
-export default new ResetService('Outlook', 'vladimiredelmann@hotmail.com', 'gotsanN123J');
+export default new ResetService(EMAIL_SERVICE, EMAIL_USERNAME, EMAIL_PASSWORD);
