@@ -13,9 +13,9 @@ function checkAdminRole(req, res, next) {
       );
     
     console.log(decoded.user.role)
-    // if (decoded.user.role !== 'admin') {
-    //     return res.status(403).json('User is not Admin');
-    // }
+    if (decoded.user.role !== 'admin') {
+        return res.status(403).json('User is not Admin');
+    }
     
     next();
   } catch (error) {

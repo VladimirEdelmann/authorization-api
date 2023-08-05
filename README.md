@@ -1,6 +1,28 @@
 # authorization-api
-Aвторизація має в себе включати реєстрацію, вхід у систему, забув пароль, скинути пароль, підтвердження аккаунта, токен сесія.
-Add specific respond to client to know what happened on the server
-Add checking username and password ^
-Add middleware to every endpoint ^
-File with constants
+This is backend application that allows users to register, log in, confirm their email addresses, and reset their passwords securely. It's built with JavaScript and utilizes a MongoDB database for data storage.
+
+
+## Installation
+To get started follow these steps:
+
+1. Clone the repository:
+
+```bash
+git clone git@github.com:VladimirEdelmann/authorization-api.git
+cd authorization-api
+```
+2. Install the required dependencies:
+
+```bash
+npm install
+
+```
+
+3. Use and adjust atlas cloud for mongodb
+
+## Run
+
+```bash
+npm start
+
+```
