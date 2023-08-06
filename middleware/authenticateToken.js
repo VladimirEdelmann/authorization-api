@@ -8,6 +8,8 @@ function authenticateToken(req, res, next) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
+  console.log('cookies do not have expire time')
+
   try {
     const decoded = jwt.verify(token, JWT_SECRET_KEY);
 

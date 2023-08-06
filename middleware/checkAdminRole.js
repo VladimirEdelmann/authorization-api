@@ -9,8 +9,7 @@ function checkAdminRole(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET_KEY
-      );
+    const decoded = jwt.verify(token, JWT_SECRET_KEY);
     
     console.log(decoded.user.role)
     if (decoded.user.role !== 'admin') {
